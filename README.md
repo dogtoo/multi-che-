@@ -10,6 +10,9 @@
 4.  che server(192.168.0.x)設定iptables 要對外開放8080 及 5050 的port。註$EIF為你的網卡名稱
 iptables -A INPUT -i $EIF -p tcp --dport 8080 -j ACCEPT
 iptables -A INPUT -i $EIF -p tcp --dport 5050 -j ACCEPT
+    跟localhost一樣要把docker0的連線都打開
+iptables -A INPUT -i docker0 -j ACCEPT
+iptables -A OUTPUT -o docker0 -j ACCEPT
 5. 執行docker run
 docker run -it --rm -e CHE_MULTIUSER=true \
                     -e CHE_HOST=dogtoo.mynetgear.com \
