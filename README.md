@@ -6,13 +6,15 @@
     因為會透過session連線，需產生必要的金鑰就需透過keycloak取得。在預設安裝下如果只是要給內網使用，有發現到che要求CHE_KEYCLOAK_AUTH__SERVER__URL
     路徑有點問題。如果是內網使用只需要容器間的橋接有連到就可以了，但是他預設的位址跟che預設安裝結果的IP有點出入，預設是http://192.168.0.x:5050/auth。
     變成是跟docker0做連結了，但che容器的netWork一開始也沒把bridge加進來變成要麻手動加進來就或是在run時加上 -e CHE_KEYCLOAK_AUTH__SERVER__URL=
-    http://172.18.0.3/auth直接在容器內做連結就行了。註:ip可能會因設定或其他情況有所不同，在輸入密碼後卡在畫面時就到che的logs看一下是去那要金鑰了。
+    http://172.18.0.3/auth 直接在容器內做連結就行了。
+    註:ip可能會因設定或其他情況有所不同，在輸入密碼後卡在畫面時就到che的logs看一下是去那要金鑰了。
 4.  che server(192.168.0.x)設定iptables 要對外開放8080 及 5050 的port。註$EIF為你的網卡名稱
 iptables -A INPUT -i $EIF -p tcp --dport 8080 -j ACCEPT
 iptables -A INPUT -i $EIF -p tcp --dport 5050 -j ACCEPT
     跟localhost一樣要把docker0的連線都打開
 iptables -A INPUT -i docker0 -j ACCEPT
 iptables -A OUTPUT -o docker0 -j ACCEPT
+    multi mode 在起workspace時會建立eclipse/ubuntu_jdk8:latest的container，會包含有container要用的tomcat、Terminal...等，看在add WorkSpace時選擇那幾種stack。預設是從32768 ~ 65535的備用port去開，所以有設定路由的話要這範圍的port將導回che server。
 5. 執行docker run
 docker run -it --rm -e CHE_MULTIUSER=true \
                     -e CHE_HOST=dogtoo.mynetgear.com \
